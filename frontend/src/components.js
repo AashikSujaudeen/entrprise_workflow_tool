@@ -2015,7 +2015,7 @@ export const Cases = () => {
 };
 
 // Create Case Modal
-const CreateCaseModal = ({ onClose }) => {
+const CreateCaseModal = ({ onClose, onCaseCreated }) => {
   const [caseData, setCaseData] = useState({
     title: '',
     workflowType: 'Wire Transfer Processing',
@@ -2030,7 +2030,13 @@ const CreateCaseModal = ({ onClose }) => {
     setLoading(true);
     try {
       const result = await mockAPI.createCase(caseData);
-      alert(`✅ ${result.message}\nCase ID: ${result.case_id}\n\nTitle: ${caseData.title}\nCustomer: ${caseData.customer}\nAmount: ${caseData.amount}`);
+      alert(`✅ ${result.message}\nCase ID: ${result.case_id}\n\nTitle: ${caseData.title}\nCustomer: ${caseData.customer}\nAmount: ${caseData.amount}\nStatus: New case added to list!`);
+      
+      // Refresh the cases list
+      if (onCaseCreated) {
+        onCaseCreated();
+      }
+      
       onClose();
     } catch (error) {
       alert('❌ Error creating case: ' + error.message);
