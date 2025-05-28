@@ -234,21 +234,21 @@ export const Dashboard = () => {
       <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl p-8 text-white">
         <div className="flex items-center justify-between">
           <div className="flex-1">
-            <h2 className="text-3xl font-bold mb-2">Welcome to Pega Platform</h2>
-            <p className="text-blue-100 mb-6">Transform your business with intelligent workflow automation</p>
+            <h2 className="text-3xl font-bold mb-2">Welcome to PegaBank Platform</h2>
+            <p className="text-blue-100 mb-6">Streamline banking operations with intelligent workflow automation</p>
             <div className="flex space-x-4">
               <button className="bg-white text-blue-600 px-6 py-2 rounded-lg font-medium hover:bg-blue-50 transition-colors">
-                Create Workflow
+                Create Banking Workflow
               </button>
               <button className="border border-white text-white px-6 py-2 rounded-lg font-medium hover:bg-white hover:text-blue-600 transition-colors">
-                View Demo
+                View Compliance Dashboard
               </button>
             </div>
           </div>
           <div className="hidden lg:block">
             <img 
-              src="https://images.unsplash.com/photo-1544717297-fa95b6ee9643" 
-              alt="Business Professional" 
+              src="https://images.pexels.com/photos/7616608/pexels-photo-7616608.jpeg" 
+              alt="Banking Professional" 
               className="w-64 h-48 object-cover rounded-lg"
             />
           </div>
@@ -260,8 +260,8 @@ export const Dashboard = () => {
         <div className="bg-white p-6 rounded-xl border border-gray-200">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-gray-500 text-sm">Active Workflows</p>
-              <p className="text-2xl font-bold text-gray-900">24</p>
+              <p className="text-gray-500 text-sm">Active Banking Workflows</p>
+              <p className="text-2xl font-bold text-gray-900">6</p>
             </div>
             <div className="bg-blue-100 p-3 rounded-lg">
               <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -273,11 +273,11 @@ export const Dashboard = () => {
         <div className="bg-white p-6 rounded-xl border border-gray-200">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-gray-500 text-sm">Open Cases</p>
-              <p className="text-2xl font-bold text-gray-900">255</p>
+              <p className="text-gray-500 text-sm">Pending Cases</p>
+              <p className="text-2xl font-bold text-gray-900">591</p>
             </div>
-            <div className="bg-green-100 p-3 rounded-lg">
-              <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="bg-orange-100 p-3 rounded-lg">
+              <svg className="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
             </div>
@@ -286,11 +286,11 @@ export const Dashboard = () => {
         <div className="bg-white p-6 rounded-xl border border-gray-200">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-gray-500 text-sm">Avg. Resolution</p>
-              <p className="text-2xl font-bold text-gray-900">2.3 days</p>
+              <p className="text-gray-500 text-sm">Avg. Processing Time</p>
+              <p className="text-2xl font-bold text-gray-900">3.4 hrs</p>
             </div>
-            <div className="bg-orange-100 p-3 rounded-lg">
-              <svg className="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="bg-green-100 p-3 rounded-lg">
+              <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
@@ -299,12 +299,12 @@ export const Dashboard = () => {
         <div className="bg-white p-6 rounded-xl border border-gray-200">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-gray-500 text-sm">Efficiency</p>
-              <p className="text-2xl font-bold text-gray-900">91%</p>
+              <p className="text-gray-500 text-sm">Compliance Score</p>
+              <p className="text-2xl font-bold text-gray-900">98.5%</p>
             </div>
             <div className="bg-purple-100 p-3 rounded-lg">
               <svg className="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
           </div>
