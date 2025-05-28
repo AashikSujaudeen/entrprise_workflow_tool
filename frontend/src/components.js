@@ -3,6 +3,58 @@ import React, { useState, useRef, useEffect, createContext, useContext } from 'r
 // API Configuration
 const API_BASE_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
 
+// Mock API for functionality when backend is not available
+const mockAPI = {
+  login: async (username, password) => {
+    // Simulate login delay
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    
+    const users = {
+      'admin': { username: 'admin', full_name: 'Admin User', role: 'admin', department: 'IT' },
+      'maker1': { username: 'maker1', full_name: 'John Maker', role: 'maker', department: 'operations' },
+      'checker1': { username: 'checker1', full_name: 'Sarah Checker', role: 'checker', department: 'operations' },
+      'qc1': { username: 'qc1', full_name: 'Mike QC', role: 'qc', department: 'quality' },
+      'resolver1': { username: 'resolver1', full_name: 'Lisa Resolver', role: 'resolver', department: 'operations' }
+    };
+    
+    if (users[username] && (password === username + '123' || password === 'admin123')) {
+      return {
+        success: true,
+        data: {
+          access_token: 'mock-token-' + username,
+          user: users[username]
+        }
+      };
+    }
+    return { success: false, error: 'Invalid credentials' };
+  },
+  
+  createCase: async (caseData) => {
+    await new Promise(resolve => setTimeout(resolve, 500));
+    return { success: true, message: 'Case created successfully', case_id: 'CASE-' + Date.now() };
+  },
+  
+  saveWorkflow: async (workflowData) => {
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    return { success: true, message: 'Workflow saved successfully', workflow_id: 'WF-' + Date.now() };
+  },
+  
+  approveCase: async (caseId) => {
+    await new Promise(resolve => setTimeout(resolve, 500));
+    return { success: true, message: 'Case approved and moved forward' };
+  },
+  
+  rejectCase: async (caseId) => {
+    await new Promise(resolve => setTimeout(resolve, 500));
+    return { success: true, message: 'Case rejected and returned' };
+  },
+  
+  generateReport: async (reportType, dateRange) => {
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    return { success: true, message: 'Report generated successfully', report_id: 'RPT-' + Date.now() };
+  }
+};
+
 // Authentication Context
 const AuthContext = createContext();
 
