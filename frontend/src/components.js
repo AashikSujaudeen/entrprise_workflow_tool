@@ -1702,6 +1702,7 @@ export const Reports = () => {
   const [reportType, setReportType] = useState('workflow_performance');
   const [dateRange, setDateRange] = useState('last_30_days');
   const [loading, setLoading] = useState(false);
+  const [reports, setReports] = useState(mockAPI.getReports());
   const { user } = useAuth();
 
   const reportTypes = [
@@ -1716,11 +1717,31 @@ export const Reports = () => {
     setLoading(true);
     try {
       const result = await mockAPI.generateReport(reportType, dateRange);
-      alert(`✅ ${result.message}\nReport ID: ${result.report_id}\n\nType: ${reportTypes.find(r => r.value === reportType)?.label}\nDate Range: ${dateRange}\nFormat: Ready for download`);
+      alert(`✅ ${result.message}\nReport ID: ${result.report_id}\n\nType: ${reportTypes.find(r => r.value === reportType)?.label}\nDate Range: ${dateRange}\nStatus: Ready for download!`);
+      
+      // Refresh reports list
+      setReports([...mockAPI.getReports()]);
     } catch (error) {
       alert('❌ Error generating report: ' + error.message);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const downloadReport = (report) => {
+    // Simulate download
+    alert(`📥 Downloading Report\nName: ${report.name}\nFormat: ${report.format}\nSize: ${report.size}\n\nNote: This is a simulation. In a real system, the file would download automatically.`);
+  };
+
+  const deleteReport = (reportId) => {
+    if (window.confirm('Are you sure you want to delete this report?')) {
+      // Remove from mock state
+      const reportIndex = mockAPI.state.reports.findIndex(r => r.id === reportId);
+      if (reportIndex !== -1) {
+        mockAPI.state.reports.splice(reportIndex, 1);
+        setReports([...mockAPI.getReports()]);
+        alert('✅ Report deleted successfully');
+      }
     }
   };
 
@@ -1780,6 +1801,58 @@ export const Reports = () => {
           </div>
         </div>
       </div>
+
+      {/* Generated Reports List */}
+      {reports.length > 0 && (
+        <div className="bg-white rounded-xl border border-gray-200">
+          <div className="p-6 border-b border-gray-200">
+            <h3 className="text-lg font-semibold text-gray-900">Generated Reports ({reports.length})</h3>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead className="bg-gray-50 border-b border-gray-200">
+                <tr>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Report Name</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Generated</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Size</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {reports.map((report) => (
+                  <tr key={report.id} className="hover:bg-gray-50">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{report.name}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 capitalize">{report.type.replace('_', ' ')}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{report.generatedAt}</td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className="px-2 py-1 text-xs rounded-full bg-green-100 text-green-700">
+                        {report.status}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{report.size}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                      <button 
+                        onClick={() => downloadReport(report)}
+                        className="text-blue-600 hover:text-blue-900 mr-3"
+                      >
+                        📥 Download
+                      </button>
+                      <button 
+                        onClick={() => deleteReport(report.id)}
+                        className="text-red-600 hover:text-red-900"
+                      >
+                        🗑️ Delete
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
 
       {/* Report Preview */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
