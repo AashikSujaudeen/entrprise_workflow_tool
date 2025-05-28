@@ -350,8 +350,8 @@ export const Dashboard = () => {
                   </svg>
                 </div>
                 <div>
-                  <p className="font-medium text-gray-900">Create New Workflow</p>
-                  <p className="text-sm text-gray-500">Design a new business process</p>
+                  <p className="font-medium text-gray-900">Create Wire Transfer</p>
+                  <p className="text-sm text-gray-500">Initiate new wire transfer process</p>
                 </div>
               </div>
             </button>
@@ -363,8 +363,8 @@ export const Dashboard = () => {
                   </svg>
                 </div>
                 <div>
-                  <p className="font-medium text-gray-900">Create New Case</p>
-                  <p className="text-sm text-gray-500">Start a new case instance</p>
+                  <p className="font-medium text-gray-900">Process Loan Application</p>
+                  <p className="text-sm text-gray-500">Review new loan applications</p>
                 </div>
               </div>
             </button>
@@ -372,12 +372,25 @@ export const Dashboard = () => {
               <div className="flex items-center space-x-3">
                 <div className="bg-purple-100 p-2 rounded-lg">
                   <svg className="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+                <div>
+                  <p className="font-medium text-gray-900">Compliance Check</p>
+                  <p className="text-sm text-gray-500">Run AML/KYC verification</p>
+                </div>
+              </div>
+            </button>
+            <button className="w-full text-left p-4 rounded-lg border border-gray-200 hover:border-blue-300 hover:bg-blue-50 transition-colors">
+              <div className="flex items-center space-x-3">
+                <div className="bg-orange-100 p-2 rounded-lg">
+                  <svg className="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                   </svg>
                 </div>
                 <div>
-                  <p className="font-medium text-gray-900">View Reports</p>
-                  <p className="text-sm text-gray-500">Analyze workflow performance</p>
+                  <p className="font-medium text-gray-900">View Banking Reports</p>
+                  <p className="text-sm text-gray-500">Access regulatory reports</p>
                 </div>
               </div>
             </button>
