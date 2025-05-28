@@ -1159,9 +1159,15 @@ const ComplianceDashboardModal = ({ onClose }) => {
 export const Workflows = () => {
   const [selectedWorkflow, setSelectedWorkflow] = useState(null);
   const [showCreateWorkflow, setShowCreateWorkflow] = useState(false);
+  const [workflows, setWorkflows] = useState(mockAPI.getWorkflows());
   
   const handleNewWorkflow = () => {
     setShowCreateWorkflow(true);
+  };
+
+  const handleWorkflowCreated = () => {
+    // Refresh workflows list
+    setWorkflows([...mockAPI.getWorkflows()]);
   };
 
   return (
@@ -1183,7 +1189,7 @@ export const Workflows = () => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-        {mockWorkflows.map((workflow) => (
+        {workflows.map((workflow) => (
           <div key={workflow.id} className="bg-white rounded-xl border border-gray-200 hover:border-blue-300 transition-colors cursor-pointer" onClick={() => setSelectedWorkflow(workflow)}>
             <div className="p-6">
               <div className="flex items-center justify-between mb-4">
@@ -1248,7 +1254,10 @@ export const Workflows = () => {
       )}
 
       {showCreateWorkflow && (
-        <CreateWorkflowModal onClose={() => setShowCreateWorkflow(false)} />
+        <CreateWorkflowModal 
+          onClose={() => setShowCreateWorkflow(false)} 
+          onWorkflowCreated={handleWorkflowCreated}
+        />
       )}
     </div>
   );
