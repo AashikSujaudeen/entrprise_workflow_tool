@@ -488,13 +488,13 @@ export const Workflows = () => {
   );
 };
 
-// Workflow Modal Component
-const WorkflowModal = ({ workflow, onClose }) => {
+// Banking Workflow Modal Component
+const BankingWorkflowModal = ({ workflow, onClose }) => {
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" onClick={onClose}>
-      <div className="bg-white rounded-xl p-6 max-w-4xl w-full max-h-[90vh] overflow-y-auto m-4" onClick={(e) => e.stopPropagation()}>
+      <div className="bg-white rounded-xl p-6 max-w-5xl w-full max-h-[90vh] overflow-y-auto m-4" onClick={(e) => e.stopPropagation()}>
         <div className="flex items-center justify-between mb-6">
-          <h3 className="text-xl font-bold text-gray-900">{workflow.name}</h3>
+          <h3 className="text-xl font-bold text-gray-900">{workflow.name} - Banking Process Flow</h3>
           <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -502,14 +502,107 @@ const WorkflowModal = ({ workflow, onClose }) => {
           </button>
         </div>
         
-        <div className="bg-gray-50 rounded-lg p-8 text-center">
+        {/* Banking Workflow Visualization */}
+        <div className="bg-gray-50 rounded-lg p-8 mb-6">
+          <h4 className="text-lg font-semibold mb-4 text-center">Maker-Checker-QC-Resolve Process Flow</h4>
+          <div className="flex items-center justify-center space-x-4">
+            {workflow.stages.map((stage, index) => (
+              <div key={stage} className="flex items-center">
+                <div className="text-center">
+                  <div className={`w-16 h-16 rounded-full flex items-center justify-center text-sm font-semibold mb-2 ${
+                    workflow.currentStage === stage 
+                      ? 'bg-blue-500 text-white border-4 border-blue-200' 
+                      : index < workflow.stages.indexOf(workflow.currentStage)
+                        ? 'bg-green-500 text-white'
+                        : 'bg-gray-200 text-gray-600'
+                  }`}>
+                    {stage === 'Maker' ? '✍️' : stage === 'Checker' ? '✅' : stage === 'QC' ? '🔍' : '⚡'}
+                  </div>
+                  <p className="text-sm font-medium">{stage}</p>
+                  <p className="text-xs text-gray-500">
+                    {stage === 'Maker' ? 'Create & Submit' :
+                     stage === 'Checker' ? 'Review & Verify' :
+                     stage === 'QC' ? 'Quality Control' : 'Final Resolution'}
+                  </p>
+                </div>
+                {index < workflow.stages.length - 1 && (
+                  <div className="flex flex-col items-center mx-4">
+                    <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                    </svg>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Banking Process Details */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="bg-white border border-gray-200 rounded-lg p-6">
+            <h4 className="text-lg font-semibold mb-4">Process Overview</h4>
+            <div className="space-y-3">
+              <div className="flex justify-between">
+                <span className="text-gray-600">Workflow Type:</span>
+                <span className="font-medium">Banking Operations</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-600">Current Stage:</span>
+                <span className="font-medium text-blue-600">{workflow.currentStage}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-600">Pending Cases:</span>
+                <span className="font-medium">{workflow.casesOpen}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-600">Average Processing:</span>
+                <span className="font-medium">{workflow.avgTime}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-600">Efficiency Rate:</span>
+                <span className="font-medium text-green-600">{workflow.efficiency}%</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white border border-gray-200 rounded-lg p-6">
+            <h4 className="text-lg font-semibold mb-4">Banking Compliance</h4>
+            <div className="space-y-3">
+              <div className="flex items-center space-x-2">
+                <svg className="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span className="text-sm">AML/KYC Compliance</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <svg className="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span className="text-sm">Regulatory Approval</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <svg className="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span className="text-sm">Dual Control Process</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <svg className="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span className="text-sm">Audit Trail</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-6 text-center">
           <img 
-            src="https://images.pexels.com/photos/7663144/pexels-photo-7663144.jpeg" 
-            alt="Workflow Diagram" 
-            className="w-full h-64 object-cover rounded-lg mb-4"
+            src="https://images.unsplash.com/photo-1586790827327-1750e2e0cc48" 
+            alt="Banking Operations" 
+            className="w-full h-48 object-cover rounded-lg"
           />
-          <p className="text-gray-600">Workflow Designer Interface</p>
-          <p className="text-sm text-gray-500 mt-2">Drag and drop workflow elements to design your process</p>
+          <p className="text-gray-600 mt-2">Enterprise Banking Workflow Management</p>
         </div>
       </div>
     </div>
