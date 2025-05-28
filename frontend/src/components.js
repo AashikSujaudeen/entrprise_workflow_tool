@@ -1847,8 +1847,9 @@ export const Cases = () => {
   const [statusFilter, setStatusFilter] = useState('All');
   const [selectedCase, setSelectedCase] = useState(null);
   const [showCreateCase, setShowCreateCase] = useState(false);
+  const [cases, setCases] = useState(mockAPI.getCases());
   
-  const filteredCases = mockCases.filter(case_item => {
+  const filteredCases = cases.filter(case_item => {
     const matchesSearch = case_item.title.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus = statusFilter === 'All' || case_item.status === statusFilter;
     return matchesSearch && matchesStatus;
@@ -1856,6 +1857,23 @@ export const Cases = () => {
 
   const handleCreateCase = () => {
     setShowCreateCase(true);
+  };
+
+  const handleCaseCreated = () => {
+    // Refresh cases list
+    setCases([...mockAPI.getCases()]);
+  };
+
+  const handleCaseUpdated = () => {
+    // Refresh cases list
+    setCases([...mockAPI.getCases()]);
+    setSelectedCase(null);
+  };
+
+  const handleProcessCase = async (caseId) => {
+    const result = await mockAPI.approveCase(caseId);
+    alert(`✅ ${result.message}\nCase: ${caseId}`);
+    handleCaseUpdated();
   };
 
   return (
@@ -1899,6 +1917,7 @@ export const Cases = () => {
               <option>Checker Review</option>
               <option>QC Review</option>
               <option>Resolved</option>
+              <option>Completed</option>
             </select>
           </div>
         </div>
@@ -1933,7 +1952,8 @@ export const Cases = () => {
                       case_item.currentStage === 'Maker' ? 'bg-blue-100 text-blue-700' :
                       case_item.currentStage === 'Checker' ? 'bg-yellow-100 text-yellow-700' :
                       case_item.currentStage === 'QC' ? 'bg-purple-100 text-purple-700' :
-                      'bg-green-100 text-green-700'
+                      case_item.currentStage === 'Resolve' ? 'bg-green-100 text-green-700' :
+                      'bg-gray-100 text-gray-700'
                     }`}>
                       {case_item.currentStage}
                     </span>
@@ -1951,15 +1971,18 @@ export const Cases = () => {
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{case_item.dueDate}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                     <button 
-                      onClick={() => alert(`🔧 Process Case: ${case_item.id}\nFeature: Open case processing interface with all workflow tools`)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        alert(`🔧 Process Case: ${case_item.id}\nFeature: Open case processing interface with all workflow tools`);
+                      }}
                       className="text-blue-600 hover:text-blue-900 mr-3"
                     >
                       Process
                     </button>
                     <button 
-                      onClick={async () => {
-                        const result = await mockAPI.approveCase(case_item.id);
-                        alert(`✅ ${result.message}\nCase: ${case_item.id}`);
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleProcessCase(case_item.id);
                       }}
                       className="text-green-600 hover:text-green-900"
                     >
@@ -1974,11 +1997,18 @@ export const Cases = () => {
       </div>
 
       {selectedCase && (
-        <BankingCaseModal case_item={selectedCase} onClose={() => setSelectedCase(null)} />
+        <BankingCaseModal 
+          case_item={selectedCase} 
+          onClose={() => setSelectedCase(null)}
+          onCaseUpdated={handleCaseUpdated}
+        />
       )}
 
       {showCreateCase && (
-        <CreateCaseModal onClose={() => setShowCreateCase(false)} />
+        <CreateCaseModal 
+          onClose={() => setShowCreateCase(false)} 
+          onCaseCreated={handleCaseCreated}
+        />
       )}
     </div>
   );
