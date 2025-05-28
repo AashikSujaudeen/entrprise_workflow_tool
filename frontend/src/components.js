@@ -3,10 +3,16 @@ import React, { useState, useRef, useEffect, createContext, useContext } from 'r
 // API Configuration
 const API_BASE_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
 
-// Mock API for functionality when backend is not available
+// Enhanced Mock API with state management
 const mockAPI = {
+  // State storage
+  state: {
+    workflows: [...mockWorkflows],
+    cases: [...mockCases],
+    reports: []
+  },
+
   login: async (username, password) => {
-    // Simulate login delay
     await new Promise(resolve => setTimeout(resolve, 1000));
     
     const users = {
@@ -31,28 +37,173 @@ const mockAPI = {
   
   createCase: async (caseData) => {
     await new Promise(resolve => setTimeout(resolve, 500));
-    return { success: true, message: 'Case created successfully', case_id: 'CASE-' + Date.now() };
+    
+    const newCase = {
+      id: `${caseData.workflowType.substring(0, 2).toUpperCase()}-2024-${String(Date.now()).slice(-3)}`,
+      title: caseData.title,
+      status: 'Maker Entry',
+      priority: caseData.priority,
+      assignee: 'Current User',
+      created: new Date().toLocaleString(),
+      dueDate: new Date(Date.now() + 24 * 60 * 60 * 1000).toLocaleString(),
+      workflow: caseData.workflowType,
+      currentStage: 'Maker',
+      amount: caseData.amount,
+      customer: caseData.customer,
+      maker: 'Current User'
+    };
+    
+    // Add to state
+    this.state.cases.unshift(newCase);
+    
+    return { 
+      success: true, 
+      message: 'Case created successfully', 
+      case_id: newCase.id,
+      case: newCase
+    };
   },
   
   saveWorkflow: async (workflowData) => {
     await new Promise(resolve => setTimeout(resolve, 1000));
-    return { success: true, message: 'Workflow saved successfully', workflow_id: 'WF-' + Date.now() };
+    
+    const newWorkflow = {
+      id: this.state.workflows.length + 1,
+      name: workflowData.name,
+      status: 'Active',
+      casesOpen: 0,
+      avgTime: '0 hours',
+      lastModified: new Date().toISOString().split('T')[0],
+      efficiency: 0,
+      icon: workflowData.type === 'banking' ? '🏦' : '⚙️',
+      type: 'banking',
+      stages: workflowData.elements ? workflowData.elements.map(el => el.stage || el.label) : ['Maker', 'Checker', 'QC', 'Resolve'],
+      currentStage: 'Draft',
+      description: workflowData.description || '',
+      elements: workflowData.elements || []
+    };
+    
+    // Add to state
+    this.state.workflows.unshift(newWorkflow);
+    
+    return { 
+      success: true, 
+      message: 'Workflow saved successfully', 
+      workflow_id: 'WF-' + Date.now(),
+      workflow: newWorkflow
+    };
   },
   
   approveCase: async (caseId) => {
     await new Promise(resolve => setTimeout(resolve, 500));
-    return { success: true, message: 'Case approved and moved forward' };
+    
+    // Find and update case
+    const caseIndex = this.state.cases.findIndex(c => c.id === caseId);
+    if (caseIndex !== -1) {
+      const case_item = this.state.cases[caseIndex];
+      const stages = ['Maker', 'Checker', 'QC', 'Resolve'];
+      const currentIndex = stages.indexOf(case_item.currentStage);
+      
+      if (currentIndex < stages.length - 1) {
+        const nextStage = stages[currentIndex + 1];
+        this.state.cases[caseIndex] = {
+          ...case_item,
+          currentStage: nextStage,
+          status: nextStage === 'Resolve' ? 'Resolved' : `${nextStage} Review`,
+          updated: new Date().toLocaleString()
+        };
+        
+        return { 
+          success: true, 
+          message: `Case approved and moved to ${nextStage} stage`,
+          updatedCase: this.state.cases[caseIndex]
+        };
+      } else {
+        this.state.cases[caseIndex] = {
+          ...case_item,
+          status: 'Completed',
+          currentStage: 'Completed',
+          updated: new Date().toLocaleString()
+        };
+        
+        return { 
+          success: true, 
+          message: 'Case completed successfully',
+          updatedCase: this.state.cases[caseIndex]
+        };
+      }
+    }
+    
+    return { success: false, error: 'Case not found' };
   },
   
   rejectCase: async (caseId) => {
     await new Promise(resolve => setTimeout(resolve, 500));
-    return { success: true, message: 'Case rejected and returned' };
+    
+    // Find and update case
+    const caseIndex = this.state.cases.findIndex(c => c.id === caseId);
+    if (caseIndex !== -1) {
+      const case_item = this.state.cases[caseIndex];
+      this.state.cases[caseIndex] = {
+        ...case_item,
+        status: 'Returned for Revision',
+        currentStage: 'Maker',
+        updated: new Date().toLocaleString(),
+        comments: [...(case_item.comments || []), {
+          user: 'Current User',
+          message: 'Case returned for revision',
+          timestamp: new Date().toLocaleString()
+        }]
+      };
+      
+      return { 
+        success: true, 
+        message: 'Case rejected and returned for revision',
+        updatedCase: this.state.cases[caseIndex]
+      };
+    }
+    
+    return { success: false, error: 'Case not found' };
   },
   
   generateReport: async (reportType, dateRange) => {
     await new Promise(resolve => setTimeout(resolve, 2000));
-    return { success: true, message: 'Report generated successfully', report_id: 'RPT-' + Date.now() };
-  }
+    
+    const reportTypes = {
+      'workflow_performance': 'Workflow Performance Report',
+      'compliance_audit': 'Compliance Audit Report',
+      'user_activity': 'User Activity Report',
+      'sla_analysis': 'SLA Analysis Report',
+      'transaction_volume': 'Transaction Volume Report'
+    };
+    
+    const newReport = {
+      id: 'RPT-' + Date.now(),
+      name: reportTypes[reportType] || 'Custom Report',
+      type: reportType,
+      dateRange: dateRange,
+      generatedAt: new Date().toLocaleString(),
+      status: 'Ready',
+      format: 'PDF',
+      size: '2.4 MB',
+      downloadUrl: '#'
+    };
+    
+    // Add to state
+    this.state.reports.unshift(newReport);
+    
+    return { 
+      success: true, 
+      message: 'Report generated successfully', 
+      report_id: newReport.id,
+      report: newReport
+    };
+  },
+
+  // Get current state
+  getWorkflows: () => mockAPI.state.workflows,
+  getCases: () => mockAPI.state.cases,
+  getReports: () => mockAPI.state.reports
 };
 
 // Authentication Context
