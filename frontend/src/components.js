@@ -1804,6 +1804,130 @@ export const Cases = () => {
   );
 };
 
+// Create Case Modal
+const CreateCaseModal = ({ onClose }) => {
+  const [caseData, setCaseData] = useState({
+    title: '',
+    workflowType: 'Wire Transfer Processing',
+    customer: '',
+    amount: '',
+    priority: 'Medium'
+  });
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      const result = await mockAPI.createCase(caseData);
+      alert(`✅ ${result.message}\nCase ID: ${result.case_id}\n\nTitle: ${caseData.title}\nCustomer: ${caseData.customer}\nAmount: ${caseData.amount}`);
+      onClose();
+    } catch (error) {
+      alert('❌ Error creating case: ' + error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" onClick={onClose}>
+      <div className="bg-white rounded-xl p-6 max-w-md w-full m-4" onClick={(e) => e.stopPropagation()}>
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-xl font-bold text-gray-900">Create New Banking Case</h3>
+          <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+        
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Case Title</label>
+            <input
+              type="text"
+              value={caseData.title}
+              onChange={(e) => setCaseData({...caseData, title: e.target.value})}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Enter case title..."
+              required
+            />
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Workflow Type</label>
+            <select
+              value={caseData.workflowType}
+              onChange={(e) => setCaseData({...caseData, workflowType: e.target.value})}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="Wire Transfer Processing">Wire Transfer Processing</option>
+              <option value="Loan Application Review">Loan Application Review</option>
+              <option value="Account Opening Process">Account Opening Process</option>
+              <option value="Compliance Verification">Compliance Verification</option>
+              <option value="Trade Finance Processing">Trade Finance Processing</option>
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Customer Name</label>
+            <input
+              type="text"
+              value={caseData.customer}
+              onChange={(e) => setCaseData({...caseData, customer: e.target.value})}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Enter customer name..."
+              required
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Amount</label>
+            <input
+              type="text"
+              value={caseData.amount}
+              onChange={(e) => setCaseData({...caseData, amount: e.target.value})}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="e.g., $50,000"
+              required
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Priority</label>
+            <select
+              value={caseData.priority}
+              onChange={(e) => setCaseData({...caseData, priority: e.target.value})}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="Low">Low</option>
+              <option value="Medium">Medium</option>
+              <option value="High">High</option>
+            </select>
+          </div>
+          
+          <div className="flex space-x-3 mt-6">
+            <button
+              type="submit"
+              disabled={loading}
+              className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors"
+            >
+              {loading ? 'Creating...' : 'Create Case'}
+            </button>
+            <button
+              type="button"
+              onClick={onClose}
+              className="flex-1 border border-gray-300 text-gray-700 py-2 px-4 rounded-lg hover:bg-gray-50 transition-colors"
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+};
+
 // Banking Case Modal Component
 const BankingCaseModal = ({ case_item, onClose }) => {
   const [loading, setLoading] = useState(false);
