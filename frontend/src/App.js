@@ -28,9 +28,10 @@ function AppContent() {
     );
   }
 
-  if (!user) {
-    return <Login onLogin={() => {}} />;
-  }
+  // Bypass authentication for testing
+  // if (!user) {
+  //   return <Login onLogin={() => {}} />;
+  // }
 
   const renderContent = () => {
     switch (activeTab) {
