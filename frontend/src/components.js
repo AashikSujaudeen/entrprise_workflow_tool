@@ -983,7 +983,7 @@ export const Dashboard = () => {
 };
 
 // Create Workflow Modal
-const CreateWorkflowModal = ({ onClose }) => {
+const CreateWorkflowModal = ({ onClose, onWorkflowCreated }) => {
   const [workflowName, setWorkflowName] = useState('');
   const [workflowType, setWorkflowType] = useState('wire_transfer');
   const [loading, setLoading] = useState(false);
@@ -996,7 +996,14 @@ const CreateWorkflowModal = ({ onClose }) => {
         type: workflowType,
         stages: ['Maker', 'Checker', 'QC', 'Resolve']
       });
-      alert(`✅ ${result.message}\nWorkflow ID: ${result.workflow_id}`);
+      
+      alert(`✅ ${result.message}\nWorkflow ID: ${result.workflow_id}\nName: ${result.workflow.name}\nStatus: ${result.workflow.status}`);
+      
+      // Refresh the workflows list
+      if (onWorkflowCreated) {
+        onWorkflowCreated();
+      }
+      
       onClose();
     } catch (error) {
       alert('❌ Error creating workflow: ' + error.message);
