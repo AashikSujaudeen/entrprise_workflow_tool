@@ -304,6 +304,8 @@ export const NotificationCenter = () => {
     </div>
   );
 };
+
+// Mock Data - Banking Focused (fallback for offline mode)
 const mockWorkflows = [
   {
     id: 1,
