@@ -1095,6 +1095,10 @@ export const Workflows = () => {
       {selectedWorkflow && (
         <BankingWorkflowModal workflow={selectedWorkflow} onClose={() => setSelectedWorkflow(null)} />
       )}
+
+      {showCreateWorkflow && (
+        <CreateWorkflowModal onClose={() => setShowCreateWorkflow(false)} />
+      )}
     </div>
   );
 };
