@@ -872,97 +872,195 @@ export const Cases = () => {
   );
 };
 
+// Banking Case Modal Component
+const BankingCaseModal = ({ case_item, onClose }) => {
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" onClick={onClose}>
+      <div className="bg-white rounded-xl p-6 max-w-4xl w-full max-h-[90vh] overflow-y-auto m-4" onClick={(e) => e.stopPropagation()}>
+        <div className="flex items-center justify-between mb-6">
+          <h3 className="text-xl font-bold text-gray-900">Banking Case Details - {case_item.id}</h3>
+          <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+        
+        {/* Case Information */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+          <div className="bg-gray-50 rounded-lg p-4">
+            <h4 className="text-lg font-semibold mb-3">Case Information</h4>
+            <div className="space-y-2">
+              <div className="flex justify-between">
+                <span className="text-gray-600">Case ID:</span>
+                <span className="font-medium">{case_item.id}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-600">Title:</span>
+                <span className="font-medium">{case_item.title}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-600">Amount:</span>
+                <span className="font-medium text-green-600">{case_item.amount}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-600">Customer:</span>
+                <span className="font-medium">{case_item.customer}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-600">Priority:</span>
+                <span className={`px-2 py-1 text-xs rounded-full ${
+                  case_item.priority === 'High' ? 'bg-red-100 text-red-700' :
+                  case_item.priority === 'Medium' ? 'bg-yellow-100 text-yellow-700' :
+                  'bg-green-100 text-green-700'
+                }`}>
+                  {case_item.priority}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-gray-50 rounded-lg p-4">
+            <h4 className="text-lg font-semibold mb-3">Workflow Progress</h4>
+            <div className="space-y-3">
+              {['Maker', 'Checker', 'QC', 'Resolve'].map((stage, index) => (
+                <div key={stage} className="flex items-center space-x-3">
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold ${
+                    case_item.currentStage === stage 
+                      ? 'bg-blue-500 text-white' 
+                      : index < ['Maker', 'Checker', 'QC', 'Resolve'].indexOf(case_item.currentStage)
+                        ? 'bg-green-500 text-white'
+                        : 'bg-gray-200 text-gray-600'
+                  }`}>
+                    {stage === 'Maker' ? '✍️' : stage === 'Checker' ? '✅' : stage === 'QC' ? '🔍' : '⚡'}
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-sm font-medium">{stage}</p>
+                    <p className="text-xs text-gray-500">
+                      {stage === 'Maker' && case_item.maker ? `Handled by: ${case_item.maker}` :
+                       stage === 'Checker' && case_item.checker ? `Handled by: ${case_item.checker}` :
+                       stage === 'QC' && case_item.qc ? `Handled by: ${case_item.qc}` :
+                       stage === 'Resolve' && case_item.resolver ? `Handled by: ${case_item.resolver}` :
+                       'Pending assignment'}
+                    </p>
+                  </div>
+                  {case_item.currentStage === stage && (
+                    <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded">Current</span>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Action Buttons */}
+        <div className="flex justify-end space-x-3">
+          <button className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50">
+            Edit Case
+          </button>
+          <button className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">
+            Approve & Move Forward
+          </button>
+          <button className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700">
+            Reject & Return
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 // Analytics Component
 export const Analytics = () => {
   return (
     <div className="p-6 space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">Analytics</h2>
-          <p className="text-gray-600">Monitor workflow performance and insights</p>
+          <h2 className="text-2xl font-bold text-gray-900">Banking Analytics</h2>
+          <p className="text-gray-600">Monitor banking workflow performance and compliance metrics</p>
         </div>
         <div className="flex space-x-2">
           <button className="border border-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-50 transition-colors">
-            Export
+            Export Report
           </button>
           <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
-            Generate Report
+            Generate Compliance Report
           </button>
         </div>
       </div>
 
-      {/* Performance Metrics */}
+      {/* Banking Performance Metrics */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="bg-white p-6 rounded-xl border border-gray-200">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Workflow Performance</h3>
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">Maker-Checker Performance</h3>
           <div className="text-center">
             <img 
-              src="https://images.pexels.com/photos/8532850/pexels-photo-8532850.jpeg" 
-              alt="Analytics Dashboard" 
+              src="https://images.unsplash.com/photo-1574288061782-da2d3f79a72e" 
+              alt="Banking Operations" 
               className="w-full h-32 object-cover rounded-lg mb-4"
             />
             <div className="space-y-2">
               <div className="flex justify-between">
-                <span className="text-gray-600">Average Resolution Time</span>
-                <span className="font-semibold">2.3 days</span>
+                <span className="text-gray-600">Avg. Maker Time</span>
+                <span className="font-semibold">1.2 hours</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-600">Checker Approval Rate</span>
+                <span className="font-semibold text-green-600">96%</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-600">QC Pass Rate</span>
+                <span className="font-semibold text-blue-600">98.5%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white p-6 rounded-xl border border-gray-200">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">Compliance Metrics</h3>
+          <div className="text-center">
+            <img 
+              src="https://images.unsplash.com/photo-1654089670624-0db58288cd01" 
+              alt="Compliance Monitoring" 
+              className="w-full h-32 object-cover rounded-lg mb-4"
+            />
+            <div className="space-y-2">
+              <div className="flex justify-between">
+                <span className="text-gray-600">AML Compliance</span>
+                <span className="font-semibold text-green-600">100%</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-600">KYC Verification</span>
+                <span className="font-semibold text-green-600">99.2%</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-600">Regulatory Score</span>
+                <span className="font-semibold text-blue-600">98.5%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white p-6 rounded-xl border border-gray-200">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">Transaction Processing</h3>
+          <div className="text-center">
+            <img 
+              src="https://images.pexels.com/photos/9169180/pexels-photo-9169180.jpeg" 
+              alt="Digital Banking" 
+              className="w-full h-32 object-cover rounded-lg mb-4"
+            />
+            <div className="space-y-2">
+              <div className="flex justify-between">
+                <span className="text-gray-600">Daily Volume</span>
+                <span className="font-semibold">$2.4M</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-600">Processing Time</span>
+                <span className="font-semibold text-purple-600">3.4 hrs</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-600">Success Rate</span>
-                <span className="font-semibold text-green-600">94%</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-600">Active Processes</span>
-                <span className="font-semibold">24</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white p-6 rounded-xl border border-gray-200">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Team Productivity</h3>
-          <div className="text-center">
-            <img 
-              src="https://images.pexels.com/photos/7562452/pexels-photo-7562452.jpeg" 
-              alt="Team Collaboration" 
-              className="w-full h-32 object-cover rounded-lg mb-4"
-            />
-            <div className="space-y-2">
-              <div className="flex justify-between">
-                <span className="text-gray-600">Cases Completed</span>
-                <span className="font-semibold">1,247</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-600">Team Efficiency</span>
-                <span className="font-semibold text-blue-600">91%</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-600">Active Users</span>
-                <span className="font-semibold">42</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white p-6 rounded-xl border border-gray-200">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Process Automation</h3>
-          <div className="text-center">
-            <img 
-              src="https://images.pexels.com/photos/8728384/pexels-photo-8728384.jpeg" 
-              alt="Process Automation" 
-              className="w-full h-32 object-cover rounded-lg mb-4"
-            />
-            <div className="space-y-2">
-              <div className="flex justify-between">
-                <span className="text-gray-600">Automated Tasks</span>
-                <span className="font-semibold">156</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-600">Time Saved</span>
-                <span className="font-semibold text-purple-600">340 hrs</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-600">Error Reduction</span>
-                <span className="font-semibold text-green-600">78%</span>
+                <span className="font-semibold text-green-600">99.8%</span>
               </div>
             </div>
           </div>
@@ -972,28 +1070,28 @@ export const Analytics = () => {
       {/* Charts Section */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="bg-white p-6 rounded-xl border border-gray-200">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Monthly Workflow Trends</h3>
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">Banking Workflow Trends</h3>
           <div className="h-64 bg-gray-50 rounded-lg flex items-center justify-center">
             <div className="text-center">
               <svg className="w-12 h-12 text-blue-500 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
               </svg>
-              <p className="text-gray-600">Workflow trend chart</p>
-              <p className="text-sm text-gray-500">Interactive analytics visualization</p>
+              <p className="text-gray-600">Banking workflow analytics</p>
+              <p className="text-sm text-gray-500">Maker-Checker-QC-Resolve performance trends</p>
             </div>
           </div>
         </div>
 
         <div className="bg-white p-6 rounded-xl border border-gray-200">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Case Distribution</h3>
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">Stage Distribution</h3>
           <div className="h-64 bg-gray-50 rounded-lg flex items-center justify-center">
             <div className="text-center">
               <svg className="w-12 h-12 text-purple-500 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z" />
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z" />
               </svg>
-              <p className="text-gray-600">Case distribution pie chart</p>
-              <p className="text-sm text-gray-500">Visual breakdown by workflow type</p>
+              <p className="text-gray-600">Case distribution by stage</p>
+              <p className="text-sm text-gray-500">Visual breakdown of workflow stages</p>
             </div>
           </div>
         </div>
