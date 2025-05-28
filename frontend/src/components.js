@@ -480,6 +480,8 @@ const workflowElements = [
 
 // Header Component
 export const Header = ({ activeTab, setActiveTab }) => {
+  const { user, logout } = useAuth();
+  
   return (
     <header className="bg-white border-b border-gray-200 px-6 py-4">
       <div className="flex items-center justify-between">
@@ -488,10 +490,10 @@ export const Header = ({ activeTab, setActiveTab }) => {
             <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
               <span className="text-white font-bold text-sm">P</span>
             </div>
-            <h1 className="text-xl font-semibold text-gray-900">Pega Platform</h1>
+            <h1 className="text-xl font-semibold text-gray-900">PegaBank Platform</h1>
           </div>
           <nav className="flex space-x-1">
-            {['Dashboard', 'Workflows', 'Cases', 'Analytics'].map((tab) => (
+            {['Dashboard', 'Workflows', 'Designer', 'Cases', 'Analytics', 'Reports'].map((tab) => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab.toLowerCase())}
@@ -507,24 +509,27 @@ export const Header = ({ activeTab, setActiveTab }) => {
           </nav>
         </div>
         <div className="flex items-center space-x-4">
-          <button className="p-2 text-gray-500 hover:text-gray-700">
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-5 5-5-5h5v-12h0v12z" />
-            </svg>
-          </button>
-          <button className="p-2 text-gray-500 hover:text-gray-700">
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-            </svg>
-          </button>
+          <NotificationCenter />
           <div className="flex items-center space-x-2">
             <img 
               src="https://images.pexels.com/photos/7616608/pexels-photo-7616608.jpeg" 
               alt="User Avatar" 
               className="w-8 h-8 rounded-full object-cover"
             />
-            <span className="text-sm text-gray-700">John Doe</span>
+            <div className="text-sm">
+              <div className="text-gray-700">{user?.full_name || 'User'}</div>
+              <div className="text-xs text-gray-500 capitalize">{user?.role || 'Role'}</div>
+            </div>
           </div>
+          <button 
+            onClick={logout}
+            className="p-2 text-gray-500 hover:text-gray-700"
+            title="Logout"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+            </svg>
+          </button>
         </div>
       </div>
     </header>
