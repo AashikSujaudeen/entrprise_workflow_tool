@@ -831,7 +831,179 @@ export const Dashboard = () => {
   );
 };
 
-// Workflows Component
+// Create Workflow Modal
+const CreateWorkflowModal = ({ onClose }) => {
+  const [workflowName, setWorkflowName] = useState('');
+  const [workflowType, setWorkflowType] = useState('wire_transfer');
+  const [loading, setLoading] = useState(false);
+
+  const handleCreate = async () => {
+    setLoading(true);
+    try {
+      const result = await mockAPI.saveWorkflow({
+        name: workflowName,
+        type: workflowType,
+        stages: ['Maker', 'Checker', 'QC', 'Resolve']
+      });
+      alert(`✅ ${result.message}\nWorkflow ID: ${result.workflow_id}`);
+      onClose();
+    } catch (error) {
+      alert('❌ Error creating workflow: ' + error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" onClick={onClose}>
+      <div className="bg-white rounded-xl p-6 max-w-md w-full m-4" onClick={(e) => e.stopPropagation()}>
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-xl font-bold text-gray-900">Create Banking Workflow</h3>
+          <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+        
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Workflow Name</label>
+            <input
+              type="text"
+              value={workflowName}
+              onChange={(e) => setWorkflowName(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Enter workflow name..."
+            />
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Workflow Type</label>
+            <select
+              value={workflowType}
+              onChange={(e) => setWorkflowType(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="wire_transfer">Wire Transfer Processing</option>
+              <option value="loan_application">Loan Application Review</option>
+              <option value="account_opening">Account Opening Process</option>
+              <option value="compliance_check">Compliance Verification</option>
+            </select>
+          </div>
+          
+          <div className="flex space-x-3 mt-6">
+            <button
+              onClick={handleCreate}
+              disabled={loading || !workflowName}
+              className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors"
+            >
+              {loading ? 'Creating...' : 'Create Workflow'}
+            </button>
+            <button
+              onClick={onClose}
+              className="flex-1 border border-gray-300 text-gray-700 py-2 px-4 rounded-lg hover:bg-gray-50 transition-colors"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Compliance Dashboard Modal
+const ComplianceDashboardModal = ({ onClose }) => {
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" onClick={onClose}>
+      <div className="bg-white rounded-xl p-6 max-w-4xl w-full max-h-[90vh] overflow-y-auto m-4" onClick={(e) => e.stopPropagation()}>
+        <div className="flex items-center justify-between mb-6">
+          <h3 className="text-xl font-bold text-gray-900">Compliance Dashboard</h3>
+          <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+            <h4 className="text-lg font-semibold text-green-800 mb-3">AML Compliance</h4>
+            <div className="space-y-2">
+              <div className="flex justify-between">
+                <span>Compliance Rate:</span>
+                <span className="font-bold text-green-600">100%</span>
+              </div>
+              <div className="flex justify-between">
+                <span>Cases Reviewed:</span>
+                <span className="font-bold">1,247</span>
+              </div>
+              <div className="flex justify-between">
+                <span>Alerts Resolved:</span>
+                <span className="font-bold">98.5%</span>
+              </div>
+            </div>
+          </div>
+          
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+            <h4 className="text-lg font-semibold text-blue-800 mb-3">KYC Verification</h4>
+            <div className="space-y-2">
+              <div className="flex justify-between">
+                <span>Verification Rate:</span>
+                <span className="font-bold text-blue-600">99.2%</span>
+              </div>
+              <div className="flex justify-between">
+                <span>Pending Reviews:</span>
+                <span className="font-bold">23</span>
+              </div>
+              <div className="flex justify-between">
+                <span>Risk Score:</span>
+                <span className="font-bold text-green-600">Low</span>
+              </div>
+            </div>
+          </div>
+          
+          <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
+            <h4 className="text-lg font-semibold text-purple-800 mb-3">Regulatory Reporting</h4>
+            <div className="space-y-2">
+              <div className="flex justify-between">
+                <span>Reports Filed:</span>
+                <span className="font-bold text-purple-600">156</span>
+              </div>
+              <div className="flex justify-between">
+                <span>On-time Submission:</span>
+                <span className="font-bold">100%</span>
+              </div>
+              <div className="flex justify-between">
+                <span>Next Due:</span>
+                <span className="font-bold">Jan 25, 2024</span>
+              </div>
+            </div>
+          </div>
+          
+          <div className="bg-orange-50 border border-orange-200 rounded-lg p-4">
+            <h4 className="text-lg font-semibold text-orange-800 mb-3">Audit Status</h4>
+            <div className="space-y-2">
+              <div className="flex justify-between">
+                <span>Last Audit:</span>
+                <span className="font-bold text-orange-600">Dec 2023</span>
+              </div>
+              <div className="flex justify-between">
+                <span>Findings:</span>
+                <span className="font-bold text-green-600">0 Critical</span>
+              </div>
+              <div className="flex justify-between">
+                <span>Next Audit:</span>
+                <span className="font-bold">Mar 2024</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
 export const Workflows = () => {
   const [selectedWorkflow, setSelectedWorkflow] = useState(null);
   
