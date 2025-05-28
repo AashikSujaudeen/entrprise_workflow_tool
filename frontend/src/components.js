@@ -1,46 +1,84 @@
 import React, { useState, useRef, useEffect } from 'react';
 
-// Mock Data
+// Mock Data - Banking Focused
 const mockWorkflows = [
   {
     id: 1,
-    name: 'Employee Onboarding',
+    name: 'Wire Transfer Processing',
     status: 'Active',
-    casesOpen: 23,
-    avgTime: '2.5 days',
+    casesOpen: 156,
+    avgTime: '4.5 hours',
     lastModified: '2024-01-15',
-    efficiency: 92,
-    icon: '👤'
+    efficiency: 94,
+    icon: '💳',
+    type: 'banking',
+    stages: ['Maker', 'Checker', 'QC', 'Resolve'],
+    currentStage: 'Checker'
   },
   {
     id: 2,
-    name: 'Customer Support Ticket',
+    name: 'Loan Application Review',
     status: 'Active',
-    casesOpen: 187,
-    avgTime: '4.2 hours',
-    lastModified: '2024-01-14',
-    efficiency: 87,
-    icon: '🎧'
+    casesOpen: 89,
+    avgTime: '2.3 days',
+    lastModified: '2024-01-15',
+    efficiency: 91,
+    icon: '🏦',
+    type: 'banking',
+    stages: ['Maker', 'Checker', 'QC', 'Resolve'],
+    currentStage: 'QC'
   },
   {
     id: 3,
-    name: 'Purchase Order Approval',
+    name: 'Account Opening Process',
     status: 'Active',
-    casesOpen: 45,
+    casesOpen: 234,
     avgTime: '1.8 days',
-    lastModified: '2024-01-13',
-    efficiency: 95,
-    icon: '💰'
+    lastModified: '2024-01-14',
+    efficiency: 96,
+    icon: '👥',
+    type: 'banking',
+    stages: ['Maker', 'Checker', 'QC', 'Resolve'],
+    currentStage: 'Maker'
   },
   {
     id: 4,
-    name: 'IT Service Request',
+    name: 'Compliance Verification',
+    status: 'Active',
+    casesOpen: 67,
+    avgTime: '6.2 hours',
+    lastModified: '2024-01-14',
+    efficiency: 88,
+    icon: '🛡️',
+    type: 'banking',
+    stages: ['Maker', 'Checker', 'QC', 'Resolve'],
+    currentStage: 'Resolve'
+  },
+  {
+    id: 5,
+    name: 'Trade Finance Processing',
+    status: 'Active',
+    casesOpen: 45,
+    avgTime: '3.1 days',
+    lastModified: '2024-01-13',
+    efficiency: 92,
+    icon: '📊',
+    type: 'banking',
+    stages: ['Maker', 'Checker', 'QC', 'Resolve'],
+    currentStage: 'Checker'
+  },
+  {
+    id: 6,
+    name: 'Credit Card Activation',
     status: 'Draft',
     casesOpen: 0,
     avgTime: '-',
     lastModified: '2024-01-12',
     efficiency: 0,
-    icon: '💻'
+    icon: '💳',
+    type: 'banking',
+    stages: ['Maker', 'Checker', 'QC', 'Resolve'],
+    currentStage: 'Draft'
   }
 ];
 
