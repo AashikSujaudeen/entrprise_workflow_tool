@@ -607,6 +607,30 @@ export const Header = ({ activeTab, setActiveTab }) => {
 
 // Dashboard Component
 export const Dashboard = () => {
+  const [showCreateWorkflow, setShowCreateWorkflow] = useState(false);
+  const [showComplianceDashboard, setShowComplianceDashboard] = useState(false);
+  
+  const handleCreateWorkflow = () => {
+    setShowCreateWorkflow(true);
+  };
+  
+  const handleViewCompliance = () => {
+    setShowComplianceDashboard(true);
+  };
+
+  const handleQuickAction = async (action) => {
+    const actions = {
+      'wire_transfer': () => alert('Wire Transfer Creator opened! 💳\nFeature: Create new international wire transfer'),
+      'loan_application': () => alert('Loan Application Processor opened! 🏦\nFeature: Review and process loan applications'),
+      'compliance_check': () => alert('Compliance Checker opened! 🛡️\nFeature: Run AML/KYC verification processes'),
+      'banking_reports': () => alert('Banking Reports opened! 📊\nFeature: Access regulatory and performance reports')
+    };
+    
+    if (actions[action]) {
+      actions[action]();
+    }
+  };
+
   return (
     <div className="p-6 space-y-6">
       {/* Hero Section */}
@@ -616,10 +640,16 @@ export const Dashboard = () => {
             <h2 className="text-3xl font-bold mb-2">Welcome to PegaBank Platform</h2>
             <p className="text-blue-100 mb-6">Streamline banking operations with intelligent workflow automation</p>
             <div className="flex space-x-4">
-              <button className="bg-white text-blue-600 px-6 py-2 rounded-lg font-medium hover:bg-blue-50 transition-colors">
+              <button 
+                onClick={handleCreateWorkflow}
+                className="bg-white text-blue-600 px-6 py-2 rounded-lg font-medium hover:bg-blue-50 transition-colors"
+              >
                 Create Banking Workflow
               </button>
-              <button className="border border-white text-white px-6 py-2 rounded-lg font-medium hover:bg-white hover:text-blue-600 transition-colors">
+              <button 
+                onClick={handleViewCompliance}
+                className="border border-white text-white px-6 py-2 rounded-lg font-medium hover:bg-white hover:text-blue-600 transition-colors"
+              >
                 View Compliance Dashboard
               </button>
             </div>
@@ -721,7 +751,10 @@ export const Dashboard = () => {
             <h3 className="text-lg font-semibold text-gray-900">Quick Actions</h3>
           </div>
           <div className="p-6 space-y-3">
-            <button className="w-full text-left p-4 rounded-lg border border-gray-200 hover:border-blue-300 hover:bg-blue-50 transition-colors">
+            <button 
+              onClick={() => handleQuickAction('wire_transfer')}
+              className="w-full text-left p-4 rounded-lg border border-gray-200 hover:border-blue-300 hover:bg-blue-50 transition-colors"
+            >
               <div className="flex items-center space-x-3">
                 <div className="bg-blue-100 p-2 rounded-lg">
                   <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -734,7 +767,10 @@ export const Dashboard = () => {
                 </div>
               </div>
             </button>
-            <button className="w-full text-left p-4 rounded-lg border border-gray-200 hover:border-blue-300 hover:bg-blue-50 transition-colors">
+            <button 
+              onClick={() => handleQuickAction('loan_application')}
+              className="w-full text-left p-4 rounded-lg border border-gray-200 hover:border-blue-300 hover:bg-blue-50 transition-colors"
+            >
               <div className="flex items-center space-x-3">
                 <div className="bg-green-100 p-2 rounded-lg">
                   <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -747,7 +783,10 @@ export const Dashboard = () => {
                 </div>
               </div>
             </button>
-            <button className="w-full text-left p-4 rounded-lg border border-gray-200 hover:border-blue-300 hover:bg-blue-50 transition-colors">
+            <button 
+              onClick={() => handleQuickAction('compliance_check')}
+              className="w-full text-left p-4 rounded-lg border border-gray-200 hover:border-blue-300 hover:bg-blue-50 transition-colors"
+            >
               <div className="flex items-center space-x-3">
                 <div className="bg-purple-100 p-2 rounded-lg">
                   <svg className="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -760,7 +799,10 @@ export const Dashboard = () => {
                 </div>
               </div>
             </button>
-            <button className="w-full text-left p-4 rounded-lg border border-gray-200 hover:border-blue-300 hover:bg-blue-50 transition-colors">
+            <button 
+              onClick={() => handleQuickAction('banking_reports')}
+              className="w-full text-left p-4 rounded-lg border border-gray-200 hover:border-blue-300 hover:bg-blue-50 transition-colors"
+            >
               <div className="flex items-center space-x-3">
                 <div className="bg-orange-100 p-2 rounded-lg">
                   <svg className="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -776,6 +818,15 @@ export const Dashboard = () => {
           </div>
         </div>
       </div>
+
+      {/* Modals */}
+      {showCreateWorkflow && (
+        <CreateWorkflowModal onClose={() => setShowCreateWorkflow(false)} />
+      )}
+      
+      {showComplianceDashboard && (
+        <ComplianceDashboardModal onClose={() => setShowComplianceDashboard(false)} />
+      )}
     </div>
   );
 };
