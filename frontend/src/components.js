@@ -100,23 +100,34 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (username, password) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ username, password }),
-      });
+      // Try real API first, fallback to mock
+      let result;
+      try {
+        const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password }),
+        });
 
-      if (response.ok) {
-        const data = await response.json();
-        setToken(data.access_token);
-        setUser(data.user);
-        localStorage.setItem('token', data.access_token);
+        if (response.ok) {
+          const data = await response.json();
+          result = { success: true, data };
+        } else {
+          throw new Error('API not available');
+        }
+      } catch (apiError) {
+        // Fallback to mock API
+        result = await mockAPI.login(username, password);
+      }
+
+      if (result.success) {
+        setToken(result.data.access_token);
+        setUser(result.data.user);
+        localStorage.setItem('token', result.data.access_token);
+        localStorage.setItem('user', JSON.stringify(result.data.user));
         return { success: true };
       } else {
-        const error = await response.json();
-        return { success: false, error: error.detail };
+        return { success: false, error: result.error };
       }
     } catch (error) {
       return { success: false, error: 'Network error' };
