@@ -758,6 +758,7 @@ export const WorkflowDesigner = () => {
 export const Cases = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('All');
+  const [selectedCase, setSelectedCase] = useState(null);
   
   const filteredCases = mockCases.filter(case_item => {
     const matchesSearch = case_item.title.toLowerCase().includes(searchTerm.toLowerCase());
@@ -769,14 +770,14 @@ export const Cases = () => {
     <div className="p-6">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">Cases</h2>
-          <p className="text-gray-600">Manage and track case instances</p>
+          <h2 className="text-2xl font-bold text-gray-900">Banking Cases</h2>
+          <p className="text-gray-600">Track and manage banking workflow cases</p>
         </div>
         <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center space-x-2">
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
           </svg>
-          <span>New Case</span>
+          <span>New Banking Case</span>
         </button>
       </div>
 
@@ -786,7 +787,7 @@ export const Cases = () => {
           <div className="flex-1">
             <input
               type="text"
-              placeholder="Search cases..."
+              placeholder="Search banking cases..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -799,10 +800,10 @@ export const Cases = () => {
               className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option>All</option>
-              <option>In Progress</option>
-              <option>Pending</option>
-              <option>Approved</option>
-              <option>Completed</option>
+              <option>Maker Entry</option>
+              <option>Checker Review</option>
+              <option>QC Review</option>
+              <option>Resolved</option>
             </select>
           </div>
         </div>
@@ -816,27 +817,33 @@ export const Cases = () => {
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Case ID</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Priority</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Customer</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Current Stage</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Assignee</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Priority</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Due Date</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               {filteredCases.map((case_item) => (
-                <tr key={case_item.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{case_item.id}</td>
+                <tr key={case_item.id} className="hover:bg-gray-50 cursor-pointer" onClick={() => setSelectedCase(case_item)}>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-blue-600">{case_item.id}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{case_item.title}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{case_item.amount}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{case_item.customer}</td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span className={`px-2 py-1 text-xs rounded-full ${
-                      case_item.status === 'In Progress' ? 'bg-blue-100 text-blue-700' :
-                      case_item.status === 'Pending' ? 'bg-yellow-100 text-yellow-700' :
+                      case_item.currentStage === 'Maker' ? 'bg-blue-100 text-blue-700' :
+                      case_item.currentStage === 'Checker' ? 'bg-yellow-100 text-yellow-700' :
+                      case_item.currentStage === 'QC' ? 'bg-purple-100 text-purple-700' :
                       'bg-green-100 text-green-700'
                     }`}>
-                      {case_item.status}
+                      {case_item.currentStage}
                     </span>
                   </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{case_item.assignee}</td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span className={`px-2 py-1 text-xs rounded-full ${
                       case_item.priority === 'High' ? 'bg-red-100 text-red-700' :
@@ -846,11 +853,10 @@ export const Cases = () => {
                       {case_item.priority}
                     </span>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{case_item.assignee}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{case_item.dueDate}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                    <button className="text-blue-600 hover:text-blue-900 mr-3">Edit</button>
-                    <button className="text-red-600 hover:text-red-900">Delete</button>
+                    <button className="text-blue-600 hover:text-blue-900 mr-3">Process</button>
+                    <button className="text-green-600 hover:text-green-900">Approve</button>
                   </td>
                 </tr>
               ))}
@@ -858,6 +864,10 @@ export const Cases = () => {
           </table>
         </div>
       </div>
+
+      {selectedCase && (
+        <BankingCaseModal case_item={selectedCase} onClose={() => setSelectedCase(null)} />
+      )}
     </div>
   );
 };
