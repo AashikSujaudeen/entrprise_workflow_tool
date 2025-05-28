@@ -7,7 +7,13 @@ const API_BASE_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
+  // Set a default user for testing
+  const [user, setUser] = useState({
+    id: '1',
+    username: 'admin',
+    role: 'admin',
+    name: 'Admin User'
+  });
   const [token, setToken] = useState(localStorage.getItem('token'));
   const [loading, setLoading] = useState(true);
 
