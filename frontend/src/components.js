@@ -1762,8 +1762,21 @@ export const Cases = () => {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{case_item.dueDate}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                    <button className="text-blue-600 hover:text-blue-900 mr-3">Process</button>
-                    <button className="text-green-600 hover:text-green-900">Approve</button>
+                    <button 
+                      onClick={() => alert(`🔧 Process Case: ${case_item.id}\nFeature: Open case processing interface with all workflow tools`)}
+                      className="text-blue-600 hover:text-blue-900 mr-3"
+                    >
+                      Process
+                    </button>
+                    <button 
+                      onClick={async () => {
+                        const result = await mockAPI.approveCase(case_item.id);
+                        alert(`✅ ${result.message}\nCase: ${case_item.id}`);
+                      }}
+                      className="text-green-600 hover:text-green-900"
+                    >
+                      Approve
+                    </button>
                   </td>
                 </tr>
               ))}
