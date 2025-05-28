@@ -1778,6 +1778,40 @@ export const Cases = () => {
 
 // Banking Case Modal Component
 const BankingCaseModal = ({ case_item, onClose }) => {
+  const [loading, setLoading] = useState(false);
+
+  const handleApprove = async () => {
+    setLoading(true);
+    try {
+      const result = await mockAPI.approveCase(case_item.id);
+      alert(`✅ ${result.message}\nCase: ${case_item.id}\nStatus: Moved to next stage`);
+      onClose();
+    } catch (error) {
+      alert('❌ Error approving case: ' + error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleReject = async () => {
+    if (window.confirm('Are you sure you want to reject this case? It will be returned to the previous stage.')) {
+      setLoading(true);
+      try {
+        const result = await mockAPI.rejectCase(case_item.id);
+        alert(`🔄 ${result.message}\nCase: ${case_item.id}\nStatus: Returned for revision`);
+        onClose();
+      } catch (error) {
+        alert('❌ Error rejecting case: ' + error.message);
+      } finally {
+        setLoading(false);
+      }
+    }
+  };
+
+  const handleEdit = () => {
+    alert(`📝 Edit Case: ${case_item.id}\nFeature: Open case editor with full details and modification capabilities`);
+  };
+
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" onClick={onClose}>
       <div className="bg-white rounded-xl p-6 max-w-4xl w-full max-h-[90vh] overflow-y-auto m-4" onClick={(e) => e.stopPropagation()}>
@@ -1859,14 +1893,25 @@ const BankingCaseModal = ({ case_item, onClose }) => {
 
         {/* Action Buttons */}
         <div className="flex justify-end space-x-3">
-          <button className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50">
-            Edit Case
+          <button 
+            onClick={handleEdit}
+            className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+          >
+            📝 Edit Case
           </button>
-          <button className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">
-            Approve & Move Forward
+          <button 
+            onClick={handleApprove}
+            disabled={loading}
+            className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 transition-colors"
+          >
+            {loading ? 'Processing...' : '✅ Approve & Move Forward'}
           </button>
-          <button className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700">
-            Reject & Return
+          <button 
+            onClick={handleReject}
+            disabled={loading}
+            className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50 transition-colors"
+          >
+            {loading ? 'Processing...' : '❌ Reject & Return'}
           </button>
         </div>
       </div>
