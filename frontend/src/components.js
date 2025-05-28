@@ -1796,6 +1796,10 @@ export const Cases = () => {
       {selectedCase && (
         <BankingCaseModal case_item={selectedCase} onClose={() => setSelectedCase(null)} />
       )}
+
+      {showCreateCase && (
+        <CreateCaseModal onClose={() => setShowCreateCase(false)} />
+      )}
     </div>
   );
 };
