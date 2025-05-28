@@ -84,34 +84,81 @@ const mockWorkflows = [
 
 const mockCases = [
   {
-    id: 'CASE-001',
-    title: 'John Smith - Employee Onboarding',
-    status: 'In Progress',
+    id: 'WT-2024-001',
+    title: 'Wire Transfer - $250,000 to Deutsche Bank',
+    status: 'Checker Review',
     priority: 'High',
     assignee: 'Sarah Johnson',
     created: '2024-01-15 09:30',
-    dueDate: '2024-01-17 17:00',
-    workflow: 'Employee Onboarding'
+    dueDate: '2024-01-15 17:00',
+    workflow: 'Wire Transfer Processing',
+    currentStage: 'Checker',
+    amount: '$250,000',
+    customer: 'Global Industries Corp',
+    maker: 'David Chen',
+    checker: 'Sarah Johnson'
   },
   {
-    id: 'CASE-002',
-    title: 'Network Connection Issue',
-    status: 'Pending',
+    id: 'LA-2024-002',
+    title: 'Personal Loan Application - $45,000',
+    status: 'QC Review',
     priority: 'Medium',
-    assignee: 'Mike Chen',
+    assignee: 'Mike Rodriguez',
     created: '2024-01-15 11:15',
     dueDate: '2024-01-16 14:00',
-    workflow: 'Customer Support Ticket'
+    workflow: 'Loan Application Review',
+    currentStage: 'QC',
+    amount: '$45,000',
+    customer: 'Jennifer Williams',
+    maker: 'Alex Thompson',
+    checker: 'Lisa Brown',
+    qc: 'Mike Rodriguez'
   },
   {
-    id: 'CASE-003',
-    title: 'Office Supplies Purchase',
-    status: 'Approved',
+    id: 'AO-2024-003',
+    title: 'Business Account Opening - TechStart LLC',
+    status: 'Resolved',
     priority: 'Low',
     assignee: 'Jennifer Davis',
     created: '2024-01-14 14:20',
     dueDate: '2024-01-16 12:00',
-    workflow: 'Purchase Order Approval'
+    workflow: 'Account Opening Process',
+    currentStage: 'Resolve',
+    amount: 'Initial Deposit: $10,000',
+    customer: 'TechStart LLC',
+    maker: 'Robert Kim',
+    checker: 'Jennifer Davis',
+    qc: 'Mark Wilson',
+    resolver: 'Jennifer Davis'
+  },
+  {
+    id: 'CV-2024-004',
+    title: 'AML Compliance Check - High Risk Customer',
+    status: 'Maker Entry',
+    priority: 'High',
+    assignee: 'Amanda Foster',
+    created: '2024-01-15 16:45',
+    dueDate: '2024-01-16 10:00',
+    workflow: 'Compliance Verification',
+    currentStage: 'Maker',
+    amount: 'Transaction: $500,000',
+    customer: 'International Trading Co',
+    maker: 'Amanda Foster'
+  },
+  {
+    id: 'TF-2024-005',
+    title: 'Letter of Credit Processing - Import Finance',
+    status: 'Checker Review',
+    priority: 'Medium',
+    assignee: 'Carlos Martinez',
+    created: '2024-01-14 08:30',
+    dueDate: '2024-01-15 18:00',
+    workflow: 'Trade Finance Processing',
+    currentStage: 'Checker',
+    amount: '$1,200,000',
+    customer: 'Pacific Import Export',
+    maker: 'Elena Petrov',
+    checker: 'Carlos Martinez'
   }
 ];
 
