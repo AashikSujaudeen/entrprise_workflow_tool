@@ -919,11 +919,16 @@ const BankingWorkflowModal = ({ workflow, onClose }) => {
   );
 };
 
-// Workflow Designer Component
-export const WorkflowDesigner = () => {
+// Advanced Workflow Designer Component
+export const AdvancedWorkflowDesigner = () => {
   const [draggedElement, setDraggedElement] = useState(null);
   const [droppedElements, setDroppedElements] = useState([]);
+  const [selectedElement, setSelectedElement] = useState(null);
+  const [workflowName, setWorkflowName] = useState('New Banking Workflow');
+  const [workflowDescription, setWorkflowDescription] = useState('');
+  const [connections, setConnections] = useState([]);
   const canvasRef = useRef(null);
+  const { user } = useAuth();
 
   const handleDragStart = (element) => {
     setDraggedElement(element);
@@ -938,12 +943,20 @@ export const WorkflowDesigner = () => {
       
       const newElement = {
         ...draggedElement,
-        id: Date.now(),
-        x,
-        y
+        id: `${draggedElement.type}_${Date.now()}`,
+        x: Math.max(0, Math.min(x - 50, rect.width - 100)),
+        y: Math.max(0, Math.min(y - 25, rect.height - 50)),
+        properties: {
+          name: draggedElement.label,
+          description: '',
+          assignee: '',
+          sla: '24 hours',
+          conditions: []
+        }
       };
       
       setDroppedElements([...droppedElements, newElement]);
+      setDraggedElement(null);
     }
   };
 
@@ -951,16 +964,57 @@ export const WorkflowDesigner = () => {
     e.preventDefault();
   };
 
+  const handleElementClick = (element) => {
+    setSelectedElement(element);
+  };
+
+  const updateElementProperties = (elementId, properties) => {
+    setDroppedElements(prev => 
+      prev.map(el => 
+        el.id === elementId ? { ...el, properties: { ...el.properties, ...properties } } : el
+      )
+    );
+  };
+
+  const deleteElement = (elementId) => {
+    setDroppedElements(prev => prev.filter(el => el.id !== elementId));
+    setSelectedElement(null);
+  };
+
+  const saveWorkflow = async () => {
+    try {
+      const workflowData = {
+        name: workflowName,
+        description: workflowDescription,
+        elements: droppedElements,
+        connections: connections,
+        type: 'banking'
+      };
+
+      await apiRequest('/api/workflows', {
+        method: 'POST',
+        body: JSON.stringify(workflowData),
+      });
+
+      alert('Workflow saved successfully!');
+    } catch (error) {
+      alert('Error saving workflow: ' + error.message);
+    }
+  };
+
   return (
     <div className="p-6">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">Workflow Designer</h2>
-          <p className="text-gray-600">Design your business process flow</p>
+          <h2 className="text-2xl font-bold text-gray-900">Advanced Workflow Designer</h2>
+          <p className="text-gray-600">Design sophisticated banking workflows with drag-and-drop</p>
         </div>
         <div className="flex space-x-2">
-          <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
-            Save
+          <button 
+            onClick={saveWorkflow}
+            className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors"
+          >
+            Save Workflow
           </button>
           <button className="border border-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-50 transition-colors">
             Preview
@@ -968,11 +1022,36 @@ export const WorkflowDesigner = () => {
         </div>
       </div>
 
+      {/* Workflow Properties */}
+      <div className="bg-white rounded-xl border border-gray-200 p-4 mb-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Workflow Name</label>
+            <input
+              type="text"
+              value={workflowName}
+              onChange={(e) => setWorkflowName(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+            <input
+              type="text"
+              value={workflowDescription}
+              onChange={(e) => setWorkflowDescription(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Describe the workflow purpose..."
+            />
+          </div>
+        </div>
+      </div>
+
       <div className="flex gap-6">
-        {/* Toolbox */}
-        <div className="w-64 bg-white rounded-xl border border-gray-200 p-4">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Toolbox</h3>
-          <div className="space-y-2">
+        {/* Enhanced Toolbox */}
+        <div className="w-72 bg-white rounded-xl border border-gray-200 p-4">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">Banking Workflow Elements</h3>
+          <div className="space-y-3">
             {workflowElements.map((element) => (
               <div
                 key={element.type}
@@ -980,83 +1059,300 @@ export const WorkflowDesigner = () => {
                 draggable
                 onDragStart={() => handleDragStart(element)}
               >
-                <div className="flex items-center space-x-2">
-                  <span>{element.icon}</span>
-                  <span className="text-sm font-medium">{element.label}</span>
+                <div className="flex items-center space-x-3">
+                  <span className="text-lg">{element.icon}</span>
+                  <div>
+                    <div className="text-sm font-medium">{element.label}</div>
+                    <div className="text-xs text-gray-500">{element.stage}</div>
+                  </div>
                 </div>
               </div>
             ))}
           </div>
+
+          {/* Workflow Template */}
+          <div className="mt-6 pt-4 border-t border-gray-200">
+            <h4 className="text-md font-semibold text-gray-900 mb-3">Quick Templates</h4>
+            <button className="w-full p-3 border border-gray-200 rounded-lg hover:border-blue-300 hover:bg-blue-50 transition-colors text-left">
+              <div className="text-sm font-medium">Standard Banking Flow</div>
+              <div className="text-xs text-gray-500">Maker → Checker → QC → Resolve</div>
+            </button>
+          </div>
         </div>
 
-        {/* Canvas */}
+        {/* Enhanced Canvas */}
         <div className="flex-1">
           <div 
             ref={canvasRef}
-            className="bg-white border border-gray-200 rounded-xl min-h-[600px] relative"
+            className="bg-white border border-gray-200 rounded-xl min-h-[700px] relative overflow-hidden"
             onDrop={handleDrop}
             onDragOver={handleDragOver}
           >
-            <div className="absolute inset-0 bg-gray-50 bg-opacity-50" style={{
+            {/* Grid Background */}
+            <div className="absolute inset-0 opacity-40" style={{
               backgroundImage: 'radial-gradient(circle, #e5e7eb 1px, transparent 1px)',
               backgroundSize: '20px 20px'
             }}></div>
             
+            {/* Workflow Elements */}
             {droppedElements.map((element) => (
               <div
                 key={element.id}
-                className="absolute bg-white border-2 border-blue-500 rounded-lg p-3 shadow-lg cursor-move"
-                style={{ left: element.x - 50, top: element.y - 25 }}
+                className={`absolute bg-white border-2 rounded-lg p-3 shadow-lg cursor-move select-none ${
+                  selectedElement?.id === element.id ? 'border-blue-500 ring-2 ring-blue-200' : 'border-gray-300 hover:border-blue-400'
+                }`}
+                style={{ left: element.x, top: element.y }}
+                onClick={() => handleElementClick(element)}
+                onDoubleClick={() => setSelectedElement(element)}
               >
                 <div className="flex items-center space-x-2">
-                  <span>{element.icon}</span>
-                  <span className="text-sm font-medium">{element.label}</span>
+                  <span className="text-lg">{element.icon}</span>
+                  <div>
+                    <div className="text-sm font-medium">{element.properties?.name || element.label}</div>
+                    <div className="text-xs text-gray-500">{element.stage}</div>
+                  </div>
                 </div>
+                {element.properties?.assignee && (
+                  <div className="text-xs text-blue-600 mt-1">
+                    Assigned: {element.properties.assignee}
+                  </div>
+                )}
               </div>
             ))}
             
+            {/* Empty State */}
             {droppedElements.length === 0 && (
               <div className="absolute inset-0 flex items-center justify-center">
                 <div className="text-center">
                   <svg className="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
                   </svg>
-                  <p className="text-gray-500">Drag workflow elements here to start designing</p>
+                  <p className="text-gray-500">Drag banking workflow elements here to start designing</p>
+                  <p className="text-sm text-gray-400 mt-2">Create your maker-checker-QC-resolve process</p>
                 </div>
               </div>
             )}
           </div>
         </div>
 
-        {/* Properties Panel */}
-        <div className="w-64 bg-white rounded-xl border border-gray-200 p-4">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Properties</h3>
+        {/* Enhanced Properties Panel */}
+        <div className="w-80 bg-white rounded-xl border border-gray-200 p-4">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">
+            {selectedElement ? 'Element Properties' : 'Properties Panel'}
+          </h3>
+          
+          {selectedElement ? (
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Element Name</label>
+                <input
+                  type="text"
+                  value={selectedElement.properties?.name || ''}
+                  onChange={(e) => updateElementProperties(selectedElement.id, { name: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                <textarea
+                  value={selectedElement.properties?.description || ''}
+                  onChange={(e) => updateElementProperties(selectedElement.id, { description: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  rows="3"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Assignee Role</label>
+                <select
+                  value={selectedElement.properties?.assignee || ''}
+                  onChange={(e) => updateElementProperties(selectedElement.id, { assignee: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="">Select assignee...</option>
+                  <option value="maker">Maker</option>
+                  <option value="checker">Checker</option>
+                  <option value="qc">Quality Control</option>
+                  <option value="resolver">Resolver</option>
+                  <option value="manager">Manager</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">SLA</label>
+                <input
+                  type="text"
+                  value={selectedElement.properties?.sla || ''}
+                  onChange={(e) => updateElementProperties(selectedElement.id, { sla: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="e.g., 24 hours"
+                />
+              </div>
+
+              <div className="flex space-x-2">
+                <button
+                  onClick={() => deleteElement(selectedElement.id)}
+                  className="flex-1 bg-red-600 text-white py-2 px-3 rounded-lg hover:bg-red-700 transition-colors"
+                >
+                  Delete
+                </button>
+                <button
+                  onClick={() => setSelectedElement(null)}
+                  className="flex-1 border border-gray-300 text-gray-700 py-2 px-3 rounded-lg hover:bg-gray-50 transition-colors"
+                >
+                  Done
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className="text-center text-gray-500">
+              <svg className="w-12 h-12 mx-auto mb-3 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4" />
+              </svg>
+              <p>Click on a workflow element to edit its properties</p>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Enhanced Reports Component
+export const Reports = () => {
+  const [reportType, setReportType] = useState('workflow_performance');
+  const [dateRange, setDateRange] = useState('last_30_days');
+  const [loading, setLoading] = useState(false);
+  const { user } = useAuth();
+
+  const reportTypes = [
+    { value: 'workflow_performance', label: 'Workflow Performance Report' },
+    { value: 'compliance_audit', label: 'Compliance Audit Report' },
+    { value: 'user_activity', label: 'User Activity Report' },
+    { value: 'sla_analysis', label: 'SLA Analysis Report' },
+    { value: 'transaction_volume', label: 'Transaction Volume Report' }
+  ];
+
+  const generateReport = async () => {
+    setLoading(true);
+    // Simulate report generation
+    setTimeout(() => {
+      setLoading(false);
+      alert(`${reportTypes.find(r => r.value === reportType)?.label} generated successfully!`);
+    }, 2000);
+  };
+
+  return (
+    <div className="p-6 space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-2xl font-bold text-gray-900">Banking Reports & Analytics</h2>
+          <p className="text-gray-600">Generate comprehensive reports and insights</p>
+        </div>
+        <button
+          onClick={generateReport}
+          disabled={loading}
+          className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors"
+        >
+          {loading ? 'Generating...' : 'Generate Report'}
+        </button>
+      </div>
+
+      {/* Report Configuration */}
+      <div className="bg-white rounded-xl border border-gray-200 p-6">
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">Report Configuration</h3>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Report Type</label>
+            <select
+              value={reportType}
+              onChange={(e) => setReportType(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              {reportTypes.map((type) => (
+                <option key={type.value} value={type.value}>{type.label}</option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Date Range</label>
+            <select
+              value={dateRange}
+              onChange={(e) => setDateRange(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="last_7_days">Last 7 Days</option>
+              <option value="last_30_days">Last 30 Days</option>
+              <option value="last_90_days">Last 90 Days</option>
+              <option value="last_year">Last Year</option>
+              <option value="custom">Custom Range</option>
+            </select>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Format</label>
+            <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+              <option value="pdf">PDF Report</option>
+              <option value="excel">Excel Spreadsheet</option>
+              <option value="csv">CSV Data</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      {/* Report Preview */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="bg-white p-6 rounded-xl border border-gray-200">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">Workflow Performance Metrics</h3>
           <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Element Name</label>
-              <input 
-                type="text" 
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" 
-                placeholder="Enter name"
-              />
+            <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+              <span className="text-gray-600">Total Cases Processed</span>
+              <span className="font-semibold text-2xl text-green-600">1,247</span>
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
-              <textarea 
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" 
-                rows="3"
-                placeholder="Enter description"
-              ></textarea>
+            <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+              <span className="text-gray-600">Average Processing Time</span>
+              <span className="font-semibold text-2xl text-blue-600">3.4 hrs</span>
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Assignment</label>
-              <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                <option>Select assignee</option>
-                <option>Current User</option>
-                <option>Manager</option>
-                <option>Work Queue</option>
-              </select>
+            <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+              <span className="text-gray-600">SLA Compliance Rate</span>
+              <span className="font-semibold text-2xl text-purple-600">96.8%</span>
             </div>
+          </div>
+        </div>
+
+        <div className="bg-white p-6 rounded-xl border border-gray-200">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">Compliance Status</h3>
+          <div className="space-y-4">
+            <div className="flex items-center space-x-3">
+              <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+              <span className="text-sm">AML Compliance: 100% Compliant</span>
+            </div>
+            <div className="flex items-center space-x-3">
+              <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+              <span className="text-sm">KYC Verification: 99.2% Complete</span>
+            </div>
+            <div className="flex items-center space-x-3">
+              <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
+              <span className="text-sm">Audit Trail: 1 Minor Issue</span>
+            </div>
+            <div className="flex items-center space-x-3">
+              <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+              <span className="text-sm">Regulatory Reporting: Up to Date</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Chart Visualization */}
+      <div className="bg-white p-6 rounded-xl border border-gray-200">
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">Performance Trends</h3>
+        <div className="h-80 bg-gray-50 rounded-lg flex items-center justify-center">
+          <div className="text-center">
+            <svg className="w-16 h-16 text-blue-500 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+            </svg>
+            <p className="text-gray-600">Interactive Performance Charts</p>
+            <p className="text-sm text-gray-500">Real-time banking workflow analytics and trends</p>
           </div>
         </div>
       </div>
