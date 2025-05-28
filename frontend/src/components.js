@@ -2145,15 +2145,19 @@ const CreateCaseModal = ({ onClose, onCaseCreated }) => {
 };
 
 // Banking Case Modal Component
-const BankingCaseModal = ({ case_item, onClose }) => {
+const BankingCaseModal = ({ case_item, onClose, onCaseUpdated }) => {
   const [loading, setLoading] = useState(false);
 
   const handleApprove = async () => {
     setLoading(true);
     try {
       const result = await mockAPI.approveCase(case_item.id);
-      alert(`✅ ${result.message}\nCase: ${case_item.id}\nStatus: Moved to next stage`);
-      onClose();
+      alert(`✅ ${result.message}\nCase: ${case_item.id}\nNew Status: ${result.updatedCase.status}\nCurrent Stage: ${result.updatedCase.currentStage}`);
+      
+      // Refresh the cases list
+      if (onCaseUpdated) {
+        onCaseUpdated();
+      }
     } catch (error) {
       alert('❌ Error approving case: ' + error.message);
     } finally {
@@ -2166,8 +2170,12 @@ const BankingCaseModal = ({ case_item, onClose }) => {
       setLoading(true);
       try {
         const result = await mockAPI.rejectCase(case_item.id);
-        alert(`🔄 ${result.message}\nCase: ${case_item.id}\nStatus: Returned for revision`);
-        onClose();
+        alert(`🔄 ${result.message}\nCase: ${case_item.id}\nNew Status: ${result.updatedCase.status}\nReturned to: ${result.updatedCase.currentStage}`);
+        
+        // Refresh the cases list
+        if (onCaseUpdated) {
+          onCaseUpdated();
+        }
       } catch (error) {
         alert('❌ Error rejecting case: ' + error.message);
       } finally {
