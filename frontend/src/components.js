@@ -1534,11 +1534,14 @@ export const Reports = () => {
 
   const generateReport = async () => {
     setLoading(true);
-    // Simulate report generation
-    setTimeout(() => {
+    try {
+      const result = await mockAPI.generateReport(reportType, dateRange);
+      alert(`✅ ${result.message}\nReport ID: ${result.report_id}\n\nType: ${reportTypes.find(r => r.value === reportType)?.label}\nDate Range: ${dateRange}\nFormat: Ready for download`);
+    } catch (error) {
+      alert('❌ Error generating report: ' + error.message);
+    } finally {
       setLoading(false);
-      alert(`${reportTypes.find(r => r.value === reportType)?.label} generated successfully!`);
-    }, 2000);
+    }
   };
 
   return (
