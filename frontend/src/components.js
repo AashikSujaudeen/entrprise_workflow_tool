@@ -163,12 +163,14 @@ const mockCases = [
 ];
 
 const workflowElements = [
-  { type: 'start', label: 'Start', icon: '▶️' },
-  { type: 'assignment', label: 'Assignment', icon: '👤' },
-  { type: 'decision', label: 'Decision', icon: '❓' },
-  { type: 'connector', label: 'Connector', icon: '➡️' },
-  { type: 'subprocess', label: 'Subprocess', icon: '⚙️' },
-  { type: 'end', label: 'End', icon: '⏹️' }
+  { type: 'start', label: 'Start', icon: '▶️', stage: 'Initialize' },
+  { type: 'maker', label: 'Maker', icon: '✍️', stage: 'Maker' },
+  { type: 'checker', label: 'Checker', icon: '✅', stage: 'Checker' },
+  { type: 'qc', label: 'Quality Control', icon: '🔍', stage: 'QC' },
+  { type: 'resolve', label: 'Resolve', icon: '⚡', stage: 'Resolve' },
+  { type: 'decision', label: 'Decision', icon: '❓', stage: 'Decision' },
+  { type: 'reject', label: 'Reject', icon: '❌', stage: 'Reject' },
+  { type: 'end', label: 'End', icon: '⏹️', stage: 'Complete' }
 ];
 
 // Header Component
