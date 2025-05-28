@@ -1274,6 +1274,16 @@ export const AdvancedWorkflowDesigner = () => {
   };
 
   const saveWorkflow = async () => {
+    if (!workflowName.trim()) {
+      alert('⚠️ Please enter a workflow name before saving');
+      return;
+    }
+
+    if (droppedElements.length === 0) {
+      alert('⚠️ Please add at least one workflow element before saving');
+      return;
+    }
+
     try {
       const workflowData = {
         name: workflowName,
@@ -1283,14 +1293,10 @@ export const AdvancedWorkflowDesigner = () => {
         type: 'banking'
       };
 
-      await apiRequest('/api/workflows', {
-        method: 'POST',
-        body: JSON.stringify(workflowData),
-      });
-
-      alert('Workflow saved successfully!');
+      const result = await mockAPI.saveWorkflow(workflowData);
+      alert(`✅ ${result.message}\nWorkflow ID: ${result.workflow_id}\n\nElements: ${droppedElements.length}\nName: ${workflowName}`);
     } catch (error) {
-      alert('Error saving workflow: ' + error.message);
+      alert('❌ Error saving workflow: ' + error.message);
     }
   };
 
