@@ -1,16 +1,36 @@
 import React, { useState } from 'react';
 import './App.css';
 import { 
+  AuthProvider,
+  useAuth,
+  Login,
   Header, 
   Dashboard, 
   Workflows, 
-  WorkflowDesigner, 
+  AdvancedWorkflowDesigner, 
   Cases, 
-  Analytics 
+  Analytics,
+  Reports
 } from './components';
 
-function App() {
+function AppContent() {
   const [activeTab, setActiveTab] = useState('dashboard');
+  const { user, loading } = useAuth();
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full animate-pulse mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading PegaBank Platform...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return <Login onLogin={() => {}} />;
+  }
 
   const renderContent = () => {
     switch (activeTab) {
@@ -19,11 +39,13 @@ function App() {
       case 'workflows':
         return <Workflows />;
       case 'designer':
-        return <WorkflowDesigner />;
+        return <AdvancedWorkflowDesigner />;
       case 'cases':
         return <Cases />;
       case 'analytics':
         return <Analytics />;
+      case 'reports':
+        return <Reports />;
       default:
         return <Dashboard />;
     }
@@ -36,6 +58,14 @@ function App() {
         {renderContent()}
       </main>
     </div>
+  );
+}
+
+function App() {
+  return (
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
   );
 }
 
