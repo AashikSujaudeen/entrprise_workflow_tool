@@ -15,7 +15,7 @@ export const AuthProvider = ({ children }) => {
     name: 'Admin User'
   });
   const [token, setToken] = useState(localStorage.getItem('token'));
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (token) {
