@@ -409,18 +409,18 @@ export const Workflows = () => {
     <div className="p-6">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">Workflows</h2>
-          <p className="text-gray-600">Manage and monitor your business processes</p>
+          <h2 className="text-2xl font-bold text-gray-900">Banking Workflows</h2>
+          <p className="text-gray-600">Manage maker-checker-QC-resolve processes</p>
         </div>
         <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center space-x-2">
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
           </svg>
-          <span>New Workflow</span>
+          <span>New Banking Workflow</span>
         </button>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
         {mockWorkflows.map((workflow) => (
           <div key={workflow.id} className="bg-white rounded-xl border border-gray-200 hover:border-blue-300 transition-colors cursor-pointer" onClick={() => setSelectedWorkflow(workflow)}>
             <div className="p-6">
@@ -433,9 +433,35 @@ export const Workflows = () => {
                 </span>
               </div>
               <h3 className="text-lg font-semibold text-gray-900 mb-2">{workflow.name}</h3>
+              
+              {/* Banking Workflow Stages */}
+              <div className="mb-4">
+                <div className="flex items-center space-x-1 mb-2">
+                  {workflow.stages.map((stage, index) => (
+                    <div key={stage} className="flex items-center">
+                      <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold ${
+                        workflow.currentStage === stage 
+                          ? 'bg-blue-500 text-white' 
+                          : index < workflow.stages.indexOf(workflow.currentStage)
+                            ? 'bg-green-500 text-white'
+                            : 'bg-gray-200 text-gray-600'
+                      }`}>
+                        {stage === 'Maker' ? 'M' : stage === 'Checker' ? 'C' : stage === 'QC' ? 'Q' : 'R'}
+                      </div>
+                      {index < workflow.stages.length - 1 && (
+                        <div className={`w-4 h-0.5 ${
+                          index < workflow.stages.indexOf(workflow.currentStage) ? 'bg-green-500' : 'bg-gray-200'
+                        }`}></div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+                <p className="text-xs text-gray-500">Current: <span className="font-medium text-blue-600">{workflow.currentStage}</span></p>
+              </div>
+              
               <div className="space-y-2 text-sm text-gray-600">
                 <div className="flex justify-between">
-                  <span>Open Cases:</span>
+                  <span>Pending Cases:</span>
                   <span className="font-medium">{workflow.casesOpen}</span>
                 </div>
                 <div className="flex justify-between">
@@ -456,7 +482,7 @@ export const Workflows = () => {
       </div>
 
       {selectedWorkflow && (
-        <WorkflowModal workflow={selectedWorkflow} onClose={() => setSelectedWorkflow(null)} />
+        <BankingWorkflowModal workflow={selectedWorkflow} onClose={() => setSelectedWorkflow(null)} />
       )}
     </div>
   );
